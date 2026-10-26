@@ -2,11 +2,12 @@ import type { ProviderSettings, VoiceSettings } from '@/types';
 
 /**
  * binrc/desk is an OpenAI-compatible model gateway, not a Sona-only backend.
- * The shared `api.binrc.com` host already serves other cloud APIs, so keep the
- * model service under `/ai/` instead of claiming the generic `/v1` root. A
- * future `ai.binrc.com` can alias this path without changing clients.
+ * The shared `api.binrc.com` host already serves other cloud APIs, so the
+ * model service owns the `/models/v1` prefix instead of the generic `/v1`
+ * root. Sona appends `/models`, `/audio/transcriptions`, and
+ * `/chat/completions` to this base.
  */
-export const BINRC_DESK_BASE_URL = 'https://api.binrc.com/ai/v1';
+export const BINRC_DESK_BASE_URL = 'https://api.binrc.com/models/v1';
 
 export interface ProviderPreset {
   id: string;
