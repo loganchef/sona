@@ -262,9 +262,7 @@
     "testNeedsConfig": "Fill in the URL, model and key before testing.",
     "testAsrHint": "Only reads /models; no audio is uploaded.",
     "testPolishHint": "Sends one minimal request; no dictation text.",
-    "testBrowserBlocked": "The browser preview cannot reach providers directly (usually CORS). Test in the desktop app.",
-    "deskBadge": "Model service",
-    "deskBody": "One key for multiple transcription and cleanup models. Keys, models, and usage live at desk.binrc.com."
+    "testBrowserBlocked": "The browser preview cannot reach providers directly (usually CORS). Test in the desktop app."
   },
   "settings": {
     "eyebrow": "Preferences",

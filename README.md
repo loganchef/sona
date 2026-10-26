@@ -3,7 +3,7 @@
 > 说一句，落一行。
 
 跨桌面与移动端的开源语音输入：按住说一句，识别 → 整理 → 直接落到光标处。
-模型任你接（OpenAI 兼容即可），也可以只用一个 key 跑完全程；Sona 本身没有账号、没有中转服务器。模型入口（可选）：[binrc/desk](https://desk.binrc.com)，一个 key 接入多家语音与整理模型。
+模型任你接（OpenAI 兼容即可），也可以只用一个 key 跑完全程；没有账号、没有中转服务器。
 
 Tauri 2 + React 19 + TypeScript + Tailwind 4，Rust 后端分层（commands → service → dao → model）。
 

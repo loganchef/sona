@@ -33,20 +33,6 @@ export function ProvidersView({ voice, secretBackend, onSave, onNotify }: Provid
           </p>
         </header>
 
-        <section className="panel p-4">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-[15px] font-semibold text-slate-900 dark:text-white">binrc/desk</h2>
-              <span className="rounded-full bg-brand-600/10 px-2 py-0.5 text-[11px] font-semibold text-brand-700 dark:bg-brand-400/15 dark:text-brand-300">
-                {t('providers.deskBadge')}
-              </span>
-            </div>
-            <p className="mt-1 max-w-2xl text-[13px] leading-6 text-slate-600 dark:text-slate-300">
-              {t('providers.deskBody')}
-            </p>
-          </div>
-        </section>
-
         <div className="grid gap-4 lg:grid-cols-2">
           <ProviderCard
             kind="asr"
