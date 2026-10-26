@@ -1,0 +1,388 @@
+@import "tailwindcss";
+@import "./styles/mobile.css";
+
+/* Class-based dark mode: <html class="dark"> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply font-sans text-slate-900 antialiased dark:text-slate-100;
+    background: #f7f8fa;
+  }
+
+  .dark body {
+    background: #0a0b0f;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    @apply bg-brand-500/30;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 163 184 / 0.45) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: rgb(148 163 184 / 0.45);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(100 116 139 / 0.6);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-slate-400 dark:text-slate-500;
+  }
+}
+
+/* ============================================================
+   Canvas — a quiet, near-neutral ground.
+
+   No colour orbs and no grid: the page is the software, not the
+   wallpaper. Only two extremely low-contrast gradients remain so the
+   Liquid Glass surface still has something to refract.
+   ============================================================ */
+@layer components {
+  .canvas-wash {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 70% at 50% -20%, rgb(255 255 255 / 0.9) 0%, transparent 60%),
+      radial-gradient(90% 60% at 92% 108%, rgb(148 163 184 / 0.12) 0%, transparent 70%);
+  }
+
+  .dark .canvas-wash {
+    background:
+      radial-gradient(120% 70% at 50% -20%, rgb(56 63 84 / 0.45) 0%, transparent 62%),
+      radial-gradient(90% 60% at 92% 108%, rgb(84 96 130 / 0.18) 0%, transparent 72%);
+  }
+
+  .canvas-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(15 23 42 / 0.055) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(85% 65% at 50% 0%, #000 0%, transparent 78%);
+  }
+
+  .dark .canvas-dots {
+    background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  }
+}
+
+/* ============================================================
+   Surfaces — `.panel` adapts to the active surface style.
+   ============================================================ */
+@utility panel {
+  @apply relative rounded-[14px] border border-slate-200/80 bg-white shadow-[0_1px_1px_rgb(15_23_42/0.03),0_8px_20px_-16px_rgb(15_23_42/0.18)] dark:border-white/8 dark:bg-[#101216] dark:shadow-[0_1px_1px_rgb(0_0_0/0.4)];
+}
+
+@utility btn {
+  @apply inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[10px] px-3.5 py-2 text-[13px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-offset-transparent;
+}
+
+@layer components {
+  /* --- Buttons ---------------------------------------------------------- */
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-[0_8px_24px_-8px_rgb(79_70_229/0.9)] hover:bg-brand-500 active:scale-[0.97];
+  }
+
+  .btn-secondary {
+    @apply btn border border-slate-200/80 bg-white/80 text-slate-700 backdrop-blur-md hover:bg-white active:scale-[0.97] dark:border-white/12 dark:bg-white/8 dark:text-slate-200 dark:hover:bg-white/14;
+  }
+
+  .btn-ghost {
+    @apply btn text-slate-600 hover:bg-slate-900/5 active:scale-[0.97] dark:text-slate-300 dark:hover:bg-white/10;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white shadow-[0_8px_24px_-8px_rgb(220_38_38/0.9)] hover:bg-red-500 active:scale-[0.97];
+  }
+
+  .form-control {
+    @apply w-full rounded-[10px] border border-slate-200 bg-white/90 px-3 py-2.5 text-sm text-slate-900 shadow-sm transition-all duration-200 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-white/12 dark:bg-white/8 dark:text-slate-100;
+  }
+
+  .kbd {
+    @apply inline-flex items-center rounded-md border border-slate-200/80 bg-white/70 px-2 py-1 font-mono text-[11px] font-semibold text-slate-600 shadow-sm dark:border-white/15 dark:bg-white/10 dark:text-slate-200;
+  }
+
+  .page-shell {
+    @apply mx-auto w-full max-w-[1180px] px-5 lg:px-8;
+  }
+
+  /* Content clears the fixed top bar and the mobile tab bar. */
+  .page-pad {
+    @apply pb-28 pt-24 lg:pb-16 lg:pt-24;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-br from-slate-900 via-brand-700 to-sky-600 bg-clip-text text-transparent dark:from-white dark:via-brand-200 dark:to-sky-200;
+  }
+
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400;
+  }
+
+  /* Page titles are product chrome, not marketing headlines. */
+  .page-title {
+    @apply text-[26px] font-semibold leading-tight tracking-[-0.025em] text-slate-900 dark:text-white;
+  }
+}
+
+/* ============================================================
+   Animation utilities
+   ============================================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up {
+    animation: none;
+  }
+}
+
+
+
+/* ============================================================
+   LIQUID GLASS
+   ============================================================
+   Unlayered on purpose: `.panel` is declared with `@utility`, and Tailwind's
+   utilities layer always beats the components layer, so layered overrides
+   here would be silently discarded.
+
+   The look is built from four physical cues, in order of importance:
+
+     1. EDGE LENSING. `backdrop-filter: url(#lg-panel)` warps the backdrop only
+        near the border (see GlassFilters.tsx). Clear centre, bent edges — this
+        is the single thing that separates Apple's glass from frosted plastic.
+     2. MINIMAL TINT. A heavy white veil kills transparency. We keep it low and
+        lean on the lens + specular for legibility instead.
+     3. BEVEL. A bright top-left inset and dark bottom-right inset read as a
+        pane with real thickness.
+     4. SPECULAR. A narrow highlight raking the top-left corner.
+   ============================================================ */
+
+:root {
+  --glass-blur: 3px;
+  --glass-sat: 180%;
+  --glass-tint: 0.14;
+  --glass-rim: 0.75;
+  --glass-shadow: 0 24px 60px -28px rgb(15 23 42 / 0.5);
+}
+
+.dark {
+  --glass-tint: 0.07;
+  --glass-rim: 0.26;
+  --glass-shadow: 0 24px 60px -28px rgb(0 0 0 / 0.85);
+}
+
+[data-surface='glass'] .panel,
+.glass-surface {
+  position: relative;
+  isolation: isolate;
+  background-color: rgb(255 255 255 / var(--glass-tint));
+  backdrop-filter: url(#lg-panel) saturate(var(--glass-sat)) blur(var(--glass-blur));
+  -webkit-backdrop-filter: saturate(var(--glass-sat)) blur(var(--glass-blur));
+  border: 1px solid rgb(255 255 255 / var(--glass-rim));
+  box-shadow:
+    var(--glass-shadow),
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.7),
+    inset -1px -1px 0 rgb(15 23 42 / 0.06);
+}
+
+.dark [data-surface='glass'] .panel,
+.dark .glass-surface {
+  box-shadow:
+    var(--glass-shadow),
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.26),
+    inset -1px -1px 0 rgb(0 0 0 / 0.4);
+}
+
+/* Floating chrome gets the stronger lens. */
+[data-surface='glass'] .glass-chrome {
+  backdrop-filter: url(#lg-chrome) saturate(190%) blur(2px);
+  -webkit-backdrop-filter: saturate(190%) blur(2px);
+}
+
+/* Specular highlight raking the top-left corner. */
+[data-surface='glass'] .panel::before,
+.glass-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    138deg,
+    rgb(255 255 255 / 0.55) 0%,
+    rgb(255 255 255 / 0.1) 14%,
+    transparent 32%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark [data-surface='glass'] .panel::before,
+.dark .glass-surface::before {
+  background: linear-gradient(
+    138deg,
+    rgb(255 255 255 / 0.24) 0%,
+    rgb(255 255 255 / 0.05) 14%,
+    transparent 32%,
+    transparent 100%
+  );
+}
+
+/* Content sits above the decorative layer. */
+[data-surface='glass'] .panel > *,
+.glass-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Nested tiles: no second lens pass (it compounds into noise) — tint only. */
+[data-surface='glass'] .panel .panel {
+  background-color: rgb(255 255 255 / 0.2);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: rgb(255 255 255 / 0.5);
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 0.5),
+    inset -1px -1px 0 rgb(15 23 42 / 0.04);
+}
+
+.dark [data-surface='glass'] .panel .panel {
+  background-color: rgb(255 255 255 / 0.055);
+  border-color: rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 0.12),
+    inset -1px -1px 0 rgb(0 0 0 / 0.28);
+}
+
+[data-surface='glass'] .panel .panel::before {
+  display: none;
+}
+
+[data-surface='glass'] .form-control {
+  background-color: rgb(255 255 255 / 0.22);
+  backdrop-filter: blur(6px) saturate(170%);
+  -webkit-backdrop-filter: blur(6px) saturate(170%);
+  border-color: rgb(255 255 255 / 0.65);
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.45);
+}
+
+.dark [data-surface='glass'] .form-control {
+  background-color: rgb(255 255 255 / 0.06);
+  border-color: rgb(255 255 255 / 0.13);
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.1);
+}
+
+/* Firefox has no SVG backdrop-filter: fall back to a stronger frost so the
+   panels still separate from the background. */
+@supports not (backdrop-filter: url(#lg-panel)) {
+  [data-surface='glass'] .panel,
+  .glass-surface {
+    background-color: rgb(255 255 255 / 0.4);
+    backdrop-filter: blur(16px) saturate(170%);
+  }
+  .dark [data-surface='glass'] .panel,
+  .dark .glass-surface {
+    background-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-surface='glass'] .panel,
+  .glass-surface {
+    background-color: rgb(255 255 255 / 0.94);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .dark [data-surface='glass'] .panel,
+  .dark .glass-surface {
+    background-color: rgb(15 23 42 / 0.94);
+  }
+}

@@ -1,0 +1,17 @@
+/* The capsule window is transparent; the pill itself paints the surface. */
+html,
+body,
+#root {
+  background: transparent !important;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}

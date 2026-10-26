@@ -1,0 +1,49 @@
+[package]
+name = "sona"
+version = "0.1.0"
+description = "Sona: cross-platform voice input with local-first ASR and LLM polish"
+authors = ["Sona contributors"]
+license = "MIT"
+edition = "2021"
+
+[lib]
+name = "sona_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["macos-private-api", "tray-icon"] }
+tauri-plugin-os = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["clock"] }
+tokio = { version = "1", features = ["time"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "multipart", "rustls-tls"] }
+base64 = "0.22"
+# OS credential store: macOS Keychain, Windows Credential Manager, Secret Service on Linux.
+keyring = "4"
+tauri-plugin-clipboard-manager = "2"
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-window-state = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-autostart = "2"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.dev]
+debug = 1
+incremental = true
+
+[profile.release]
+codegen-units = 16
+strip = true

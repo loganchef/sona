@@ -1,0 +1,123 @@
+/* ============================================================
+   Mobile layout layer
+   Rules are scoped to html.app-mobile so that a phone in landscape
+   keeps the mobile shell instead of falling back to desktop layout.
+   useMobile() toggles the class on <html>.
+   ============================================================ */
+
+:root {
+  --mobile-header-height: 56px;
+}
+
+html.app-mobile .bottom-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  height: calc(64px + env(safe-area-inset-bottom));
+  align-items: center;
+  justify-content: space-around;
+  border-top: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.94);
+  padding-bottom: env(safe-area-inset-bottom);
+  backdrop-filter: blur(14px);
+}
+
+html.app-mobile.dark .bottom-nav,
+html.app-mobile .dark .bottom-nav {
+  border-top-color: #1e293b;
+  background: rgba(15, 23, 42, 0.94);
+}
+
+/* ---------- Safe areas ---------- */
+html.app-mobile .safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+html.app-mobile .safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------- Touch ---------- */
+html.app-mobile button,
+html.app-mobile a {
+  touch-action: manipulation;
+}
+
+/* ---------- Forms ---------- */
+/* 16px prevents iOS Safari from zooming on focus. */
+html.app-mobile input,
+html.app-mobile textarea,
+html.app-mobile select {
+  font-size: 16px;
+}
+
+/* ---------- Full-screen sheets ---------- */
+html.app-mobile .mobile-sheet-parent {
+  padding: 0 !important;
+}
+
+html.app-mobile .mobile-sheet {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  overflow-y: auto !important;
+  border-radius: 0 !important;
+}
+
+/* ---------- Small dialogs ---------- */
+html.app-mobile .fixed.inset-0.bg-black\/50:not(.mobile-sheet-parent) > div {
+  max-height: 88dvh;
+  overflow-y: auto;
+}
+
+/* ---------- Desktop / mobile visibility ---------- */
+html.app-mobile .desktop-only {
+  display: none !important;
+}
+
+html:not(.app-mobile) .mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* ---------- Swipe containers ---------- */
+.swipe-container {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---------- Bottom sheet animation ---------- */
+@keyframes app-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-sheet-up {
+  animation: app-sheet-up 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet-up {
+    animation: none;
+  }
+}
