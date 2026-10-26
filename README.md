@@ -7,6 +7,8 @@
 
 Tauri 2 + React 19 + TypeScript + Tailwind 4，Rust 后端分层（commands → service → dao → model）。
 
+![CI](https://github.com/loganchef/sona/actions/workflows/ci.yml/badge.svg)
+
 ![Sona 首页](docs/screenshots/dashboard.png)
 
 ---
@@ -48,7 +50,7 @@ Tauri 2 + React 19 + TypeScript + Tailwind 4，Rust 后端分层（commands → 
 ## 快速开始
 
 ```bash
-npm install
+npm ci
 npm run dev          # 浏览器里跑，用内置 mock 后端（不需要 Rust）
 npm run tauri:dev    # 真实桌面应用
 npm run typecheck
@@ -58,6 +60,8 @@ npm run tauri:build     # macOS .app / Windows .msi / Linux deb·AppImage
 ```
 
 已构建产物示例：`src-tauri/target/release/bundle/macos/Sona.app`（14.5 MB）。
+
+发布：推送 `v*` 标签会触发 macOS / Windows / Linux 三平台 Release 构建；移动端构建和签名说明见 `docs/RELEASE.md`。
 
 首次打开会进入引导，按顺序选一遍：
 

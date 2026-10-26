@@ -1,0 +1,132 @@
+name: Mobile Build
+
+# Mobile shells are unsigned build checks, not store releases. Run this by hand
+# after a desktop release when the mobile project or Rust pipeline changes.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-build
+  cancel-in-progress: false
+
+jobs:
+  android:
+    name: Android APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android NDK
+        run: |
+          set -euo pipefail
+          sdkmanager --install "ndk;27.0.12077973"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> "$GITHUB_ENV"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> "$GITHUB_ENV"
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: android-aarch64
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Initialize Android project
+        run: npm run tauri:android:init -- --ci
+
+      - name: Build Android APK
+        run: npm run tauri:android:build -- --ci --apk --target aarch64
+        env:
+          CI: true
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sona-android-apk
+          path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 14
+
+  ios:
+    name: iOS simulator IPA
+    runs-on: macos-14
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ios-simulator
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Initialize iOS project
+        run: npm run tauri:ios:init -- --ci
+
+      - name: Build iOS simulator
+        run: npm run tauri:ios:build -- --ci --target aarch64-sim
+        env:
+          CI: true
+          CODE_SIGNING_ALLOWED: NO
+
+      - name: Package simulator IPA
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          APP="$(find src-tauri/gen/apple -type d -name '*.app' | head -n 1)"
+          if [ -z "$APP" ]; then
+            echo "iOS .app not found" >&2
+            exit 1
+          fi
+          mkdir -p ios-artifacts Payload
+          cp -R "$APP" Payload/
+          zip -qry "ios-artifacts/Sona-${VERSION}-simulator.ipa" Payload
+          rm -rf Payload
+
+      - name: Upload simulator IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: sona-ios-simulator
+          path: ios-artifacts/*.ipa
+          if-no-files-found: error
+          retention-days: 14

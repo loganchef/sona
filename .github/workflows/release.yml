@@ -1,0 +1,159 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, for example v0.1.0; must match package.json, Cargo.toml and tauri.conf.json"
+        required: true
+        type: string
+      draft:
+        description: "Create the release as a draft"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate version
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read release tag
+        id: meta
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          TAG="${TAG#refs/tags/}"
+          case "$TAG" in
+            v[0-9]*) ;;
+            *) echo "release tag must look like v0.1.0" >&2; exit 1 ;;
+          esac
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Check versions match
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const version = process.env.VERSION;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const tauri = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+          if (pkg.version !== version || tauri.version !== version) {
+            console.error(`version mismatch: package=${pkg.version} tauri=${tauri.version} tag=${version}`);
+            process.exit(1);
+          }
+          console.log(`versions match: ${version}`);
+          NODE
+
+          grep -q "^version = \"${VERSION}\"$" src-tauri/Cargo.toml
+
+  build-desktop:
+    name: Build ${{ matrix.artifact }}
+    needs: validate
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: universal-apple-darwin
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            bundles: app,dmg
+            artifact: macos-universal
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            rust_targets: x86_64-unknown-linux-gnu
+            bundles: deb,appimage
+            artifact: linux-x64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust_targets: x86_64-pc-windows-msvc
+            bundles: nsis,msi
+            artifact: windows-x64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ${{ matrix.target }}
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libgtk-3-dev \
+            libxdo-dev \
+            libssl-dev \
+            patchelf
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build and publish
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ needs.validate.outputs.tag }}
+          releaseName: Sona ${{ needs.validate.outputs.version }}
+          releaseBody: |
+            ## Sona ${{ needs.validate.outputs.version }}
+
+            跨桌面语音输入：识别 → 整理 → 落到光标。
+
+            | 平台 | 文件 |
+            |---|---|
+            | macOS（Universal） | `Sona_*_universal.dmg` |
+            | Windows x64 | `Sona_*_x64-setup.exe` 或 `.msi` |
+            | Linux x64 | `Sona_*_amd64.AppImage` 或 `.deb` |
+
+            构建产物默认未签名。macOS 首次打开可能需要在“系统设置 → 隐私与安全性”中放行；Windows SmartScreen 也可能提示。
+
+            完整安装说明见仓库 README。Android / iOS 产物由手动触发的 Mobile Build 工作流生成，不在此发布。
+          releaseDraft: ${{ inputs.draft == true }}
+          prerelease: false
+          includeUpdaterJson: false
+          args: --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sona-${{ needs.validate.outputs.version }}-${{ matrix.artifact }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/**
+          if-no-files-found: error
+          retention-days: 14
