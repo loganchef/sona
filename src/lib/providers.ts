@@ -1,13 +1,12 @@
 import type { ProviderSettings, VoiceSettings } from '@/types';
 
 /**
- * BINRC Desk is an OpenAI-compatible model gateway, not a Sona-only backend.
+ * binrc/desk is an OpenAI-compatible model gateway, not a Sona-only backend.
  * The shared `api.binrc.com` host already serves other cloud APIs, so keep the
  * model service under `/ai/` instead of claiming the generic `/v1` root. A
  * future `ai.binrc.com` can alias this path without changing clients.
  */
 export const BINRC_DESK_BASE_URL = 'https://api.binrc.com/ai/v1';
-export const BINRC_DESK_HOME = 'https://desk.binrc.com';
 
 export interface ProviderPreset {
   id: string;
@@ -30,7 +29,7 @@ export const ASR_PRESETS: ProviderPreset[] = [
   },
   {
     id: 'binrc-desk',
-    label: 'BINRC Desk',
+    label: 'binrc/desk',
     baseUrl: BINRC_DESK_BASE_URL,
     model: '',
     hint: '一个 key 接入多家 ASR 与整理模型；密钥与模型列表在 desk.binrc.com 管理。',
@@ -90,7 +89,7 @@ export const POLISH_PRESETS: ProviderPreset[] = [
   },
   {
     id: 'binrc-desk',
-    label: 'BINRC Desk',
+    label: 'binrc/desk',
     baseUrl: BINRC_DESK_BASE_URL,
     model: '',
     hint: '一个 key 接入多家整理模型；密钥与模型列表在 desk.binrc.com 管理。',

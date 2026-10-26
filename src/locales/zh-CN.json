@@ -264,9 +264,7 @@
     "testPolishHint": "只发一个最小请求，不发送听写内容。",
     "testBrowserBlocked": "浏览器预览无法直连服务商（多为 CORS 限制），请在桌面应用里测试。",
     "deskBadge": "模型服务",
-    "deskBody": "一个 key 接入多家语音与整理模型。密钥、模型与用量都在 desk.binrc.com 管理。",
-    "deskCta": "打开 desk.binrc.com",
-    "openFailed": "打不开链接，请手动访问 desk.binrc.com。"
+    "deskBody": "一个 key 接入多家语音与整理模型。密钥、模型与用量都在 desk.binrc.com 管理。"
   },
   "settings": {
     "eyebrow": "偏好",
