@@ -1,12 +1,13 @@
 import type { ProviderSettings, VoiceSettings } from '@/types';
 
 /**
- * Binrc Cloud is an OpenAI-compatible model gateway, not a Sona-only backend.
+ * BINRC Desk is an OpenAI-compatible model gateway, not a Sona-only backend.
  * The shared `api.binrc.com` host already serves other cloud APIs, so keep the
  * model service under `/ai/` instead of claiming the generic `/v1` root. A
  * future `ai.binrc.com` can alias this path without changing clients.
  */
-export const BINRC_CLOUD_BASE_URL = 'https://api.binrc.com/ai/v1';
+export const BINRC_DESK_BASE_URL = 'https://api.binrc.com/ai/v1';
+export const BINRC_DESK_HOME = 'https://desk.binrc.com';
 
 export interface ProviderPreset {
   id: string;
@@ -28,11 +29,11 @@ export const ASR_PRESETS: ProviderPreset[] = [
     needsKey: false,
   },
   {
-    id: 'sona',
-    label: 'Binrc Cloud（未上线）',
-    baseUrl: BINRC_CLOUD_BASE_URL,
+    id: 'binrc-desk',
+    label: 'BINRC Desk',
+    baseUrl: BINRC_DESK_BASE_URL,
     model: '',
-    hint: 'Binrc 的模型网关，聚合多家 ASR 与整理模型；服务上线后从 /v1/models 选择模型。',
+    hint: '一个 key 接入多家 ASR 与整理模型；密钥与模型列表在 desk.binrc.com 管理。',
     needsKey: true,
   },
   {
@@ -88,11 +89,11 @@ export const POLISH_PRESETS: ProviderPreset[] = [
     needsKey: false,
   },
   {
-    id: 'sona',
-    label: 'Binrc Cloud（未上线）',
-    baseUrl: BINRC_CLOUD_BASE_URL,
+    id: 'binrc-desk',
+    label: 'BINRC Desk',
+    baseUrl: BINRC_DESK_BASE_URL,
     model: '',
-    hint: 'Binrc 的模型网关，聚合多家整理模型；服务上线后从 /v1/models 选择模型。',
+    hint: '一个 key 接入多家整理模型；密钥与模型列表在 desk.binrc.com 管理。',
     needsKey: true,
   },
   {
@@ -154,7 +155,9 @@ export const POLISH_PRESETS: ProviderPreset[] = [
 ];
 
 export function presetById(presets: ProviderPreset[], id: string): ProviderPreset | undefined {
-  return presets.find((preset) => preset.id === id);
+  // `sona` was the preset id in the first preview build; keep old settings usable.
+  const lookup = id === 'sona' ? 'binrc-desk' : id;
+  return presets.find((preset) => preset.id === lookup);
 }
 
 /** Apply a preset while keeping a key the user already typed. */
