@@ -1,10 +1,12 @@
 import type { ProviderSettings, VoiceSettings } from '@/types';
 
 /**
- * Our own gateway. ASR and polish share the origin so a future deployment only
- * changes one constant; model names stay empty until the service ships.
+ * Binrc Cloud is an OpenAI-compatible model gateway, not a Sona-only backend.
+ * The shared `api.binrc.com` host already serves other cloud APIs, so keep the
+ * model service under `/ai/` instead of claiming the generic `/v1` root. A
+ * future `ai.binrc.com` can alias this path without changing clients.
  */
-export const SONA_CLOUD_BASE_URL = 'https://desk.binrc.com/v1';
+export const BINRC_CLOUD_BASE_URL = 'https://api.binrc.com/ai/v1';
 
 export interface ProviderPreset {
   id: string;
@@ -27,10 +29,10 @@ export const ASR_PRESETS: ProviderPreset[] = [
   },
   {
     id: 'sona',
-    label: 'Sona Cloud（未上线）',
-    baseUrl: SONA_CLOUD_BASE_URL,
+    label: 'Binrc Cloud（未上线）',
+    baseUrl: BINRC_CLOUD_BASE_URL,
     model: '',
-    hint: '自家云端入口，预留给 desk.binrc.com 的模型资源；服务上线后再填下发的模型名。',
+    hint: 'Binrc 的模型网关，聚合多家 ASR 与整理模型；服务上线后从 /v1/models 选择模型。',
     needsKey: true,
   },
   {
@@ -87,10 +89,10 @@ export const POLISH_PRESETS: ProviderPreset[] = [
   },
   {
     id: 'sona',
-    label: 'Sona Cloud（未上线）',
-    baseUrl: SONA_CLOUD_BASE_URL,
+    label: 'Binrc Cloud（未上线）',
+    baseUrl: BINRC_CLOUD_BASE_URL,
     model: '',
-    hint: '自家云端入口，预留给 desk.binrc.com 的整理模型；服务上线后再填下发的模型名。',
+    hint: 'Binrc 的模型网关，聚合多家整理模型；服务上线后从 /v1/models 选择模型。',
     needsKey: true,
   },
   {

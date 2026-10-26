@@ -42,7 +42,7 @@ src-tauri/src/
 - `test_provider_config` 接收前端**当前草稿**而不是已保存值，用户改完网址或模型就能立刻验证，不用先保存再试。
 - 探测只发一个最小的 `GET /models` 或一次空转请求，不写历史、不入统计。ASR 返回模型数量（`models`），文案由前端按界面语言生成；润色返回成功与否，不再把英文 `reachable` 直接塞进中文界面。
 - 浏览器预览不再返回假绿灯：`src/api/client.ts` 的 mock 会真的 `fetch` 草稿里的地址；CORS 或网络失败显示「浏览器预览无法直连，请在桌面应用里测试」，而不是让用户以为已经配好。字段不完整时测试按钮直接禁用。
-- 自家云端 `desk.binrc.com` 在 `src/lib/providers.ts` 里以 `SONA_CLOUD_BASE_URL` 预留，ASR 与整理共用同一个 origin；服务端未上线前预设不填模型名，避免把未验证的模型当成可用配置。
+- Binrc Cloud 模型网关 `api.binrc.com/ai/v1` 在 `src/lib/providers.ts` 里以 `BINRC_CLOUD_BASE_URL` 预留，ASR 与整理共用同一个 origin；服务端未上线前预设不填模型名，避免把未验证的模型当成可用配置。客户端按 OpenAI 兼容约定预留 `GET /models`、`POST /audio/transcriptions`、`POST /chat/completions` 三个入口。
 
 ## 桌面端的存在方式
 

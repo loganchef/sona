@@ -52,7 +52,7 @@
 
 ## v0.4 生态
 
-- [ ] Sona Cloud（`desk.binrc.com`）：模型目录 + ASR / 整理端点；服务端未上线，客户端预设已预留
+- [ ] Binrc Cloud（`api.binrc.com/ai/v1`）：模型网关 + 模型目录 + ASR / 整理端点；服务端未上线，客户端预设已预留
 - [ ] “粘贴上一条”
 - [ ] 自动更新与双频道（stable / beta）
 - [ ] `bench/`：CER、端到端时延、真实口述样本回归
