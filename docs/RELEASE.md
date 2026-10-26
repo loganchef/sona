@@ -26,7 +26,7 @@ git push origin v0.1.0
 3. 创建 GitHub Release，并上传 `.dmg`、`.exe` / `.msi`、`.AppImage` / `.deb`。
 4. 额外把构建产物上传为 Actions artifact，保留 14 天。
 
-也可以在 Actions 里手动运行 `Release`，输入 tag 和是否草稿。手动运行要求 tag 已存在或允许 `tauri-action` 从当前提交创建。
+也可以在 Actions 里手动运行 `Release`，输入已存在的 tag 和是否草稿。手动运行会 checkout 该 tag，避免用主分支代码产出错版本的安装包。
 
 当前产物默认**未签名**：
 
